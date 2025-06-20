@@ -6,11 +6,11 @@ from wonderwords import RandomSentence
 from translate import Translator
 import json
 import random
-import config
+# import config
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = config.secret_key
+app.config['SECRET_KEY'] = SECRET_KEY
 
 # Create a Form Class
 # class NamerForm(FlaskForm):

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1>Translate this Sentense</h1>
+    <p>{{ translation }}</p>
+    <br/>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.input_sentence.label }} {{ form.input_sentence() }}
+    <input type="submit" value="Submit">
+</form>
+
+{% if result %}
+  <div class="feedback" style="margin-top: 1em; padding: 1em; border: 1px solid #ccc; border-radius: 5px;">
+    {{ result | safe }}
+  </div>
+{% endif %}
+
+
+{% endblock %}

@@ -7,7 +7,6 @@ from translate import Translator
 import json
 import random
 import os
-# import config
 
 
 app = Flask(__name__)

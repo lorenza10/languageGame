@@ -10,12 +10,7 @@ import random
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = SECRET_KEY
-
-# Create a Form Class
-# class NamerForm(FlaskForm):
-#     name = StringField ("What is your name?", validators=[DataRequired()])
-#     submit = SubmitField("Submit")
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 
 class TranslateForm(FlaskForm):

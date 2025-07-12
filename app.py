@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from wonderwords import RandomSentence
-from translate import Translator
+from googletrans import Translator
 import json
 import random
 import os
@@ -14,7 +14,7 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 
 class TranslateForm(FlaskForm):
-    input_sentence = StringField ("Translate this sentense")
+    input_sentence = StringField("Translate this sentence", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
 
@@ -33,32 +33,26 @@ def translate():
 
         return redirect(url_for('translate'))
 
-    # GET request: generate a new challenge
     s = RandomSentence()
     newSentence = s.sentence()
 
-    # Load languages
     with open('languagecodes.json', 'r') as file:
         data = json.load(file)
 
-    randNum = random.randrange(1, 137)
+    randNum = random.randrange(1, len(data))
     languageCode = data[randNum]["code"]
     language = data[randNum]["language"]
 
-    # Store language for POST comparison
     session['language'] = language
-    # print(language)
 
-    # Translate the sentence
-    translator = Translator(to_lang=languageCode)
+    translator = Translator()
     try:
-        translation = translator.translate(newSentence)
+        translation_obj = translator.translate(newSentence, dest=languageCode)
+        translation = translation_obj.text
     except Exception as e:
         print(f"Translation error: {e}")
         translation = "[Error translating]"
 
-    # Get result message from session (if any)
     result = session.pop('result', None)
 
     return render_template("index.html", translation=translation, form=form, result=result)
-

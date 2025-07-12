@@ -14,7 +14,7 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 
 class TranslateForm(FlaskForm):
-    input_sentence = StringField("Translate this sentence", validators=[DataRequired()])
+    input_sentence = StringField("Guess the language", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
 

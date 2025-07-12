@@ -3,18 +3,20 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from wonderwords import RandomSentence
-from googletrans import Translator
+from translate import Translator
 import json
 import random
 import os
-
+import logging
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'devkey123')
 
+# Logging for debugging
+logging.basicConfig(level=logging.INFO)
 
 class TranslateForm(FlaskForm):
-    input_sentence = StringField("Guess the language", validators=[DataRequired()])
+    input_sentence = StringField("Translate this sentence")
     submit = SubmitField("Submit")
 
 
@@ -39,18 +41,25 @@ def translate():
     with open('languagecodes.json', 'r') as file:
         data = json.load(file)
 
-    randNum = random.randrange(1, len(data))
-    languageCode = data[randNum]["code"]
-    language = data[randNum]["language"]
+    max_attempts = 10
+    for _ in range(max_attempts):
+        choice = random.choice(data)
+        languageCode = choice["code"]
+        language = choice["language"]
+
+        if len(languageCode) == 2:
+            break
+    else:
+        language = "english"
+        languageCode = "en"
 
     session['language'] = language
 
-    translator = Translator()
     try:
-        translation_obj = translator.translate(newSentence, dest=languageCode)
-        translation = translation_obj.text
+        translator = Translator(to_lang=languageCode)
+        translation = translator.translate(newSentence)
     except Exception as e:
-        print(f"Translation error: {e}")
+        logging.error(f"Translation error: {e}")
         translation = "[Error translating]"
 
     result = session.pop('result', None)
